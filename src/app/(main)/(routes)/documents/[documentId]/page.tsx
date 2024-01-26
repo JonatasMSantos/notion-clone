@@ -7,6 +7,7 @@ import { useMemo } from "react";
 import { Cover } from "@/components/cover";
 import { Toolbar } from "@/components/toolbar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
@@ -60,7 +61,16 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
       <Cover url={document.coverImage} />
       <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
         <Toolbar initialData={document} />
-        <Editor onChange={onChange} initialContent={document.content} />
+        <Tabs defaultValue="notes" className="w-full">
+          <TabsList className="ml-12">
+            <TabsTrigger value="notes">Notes</TabsTrigger>
+            <TabsTrigger value="board">Board</TabsTrigger>
+          </TabsList>
+          <TabsContent value="notes">
+            <Editor onChange={onChange} initialContent={document.content} />
+          </TabsContent>
+          <TabsContent value="board">Board</TabsContent>
+        </Tabs>
       </div>
     </div>
   );

@@ -9,11 +9,13 @@ import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useCoverImage } from "@/hooks/use-cover-image";
+import { useEdgeStore } from "@/lib/edgestore";
 
 export const CoverImageModal = () => {
   const params = useParams();
   const update = useMutation(api.documents.update);
   const coverImage = useCoverImage();
+  const { edgestore } = useEdgeStore();
 
   const [file, setFile] = useState<File>();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,9 +31,16 @@ export const CoverImageModal = () => {
       setIsSubmitting(true);
       setFile(file);
 
+      const res = await edgestore.publicFiles.upload({
+        file,
+        options: {
+          replaceTargetUrl: coverImage.url,
+        },
+      });
+
       await update({
         id: params.documentId as Id<"documents">,
-        coverImage: "",
+        coverImage: res.url,
       });
 
       onClose();
