@@ -64,6 +64,10 @@ export const getSidebar = query({
 
     const userId = identity.subject;
 
+    if (!userId) {
+      throw new Error("no users submitted");
+    }
+
     const documents = await ctx.db
       .query("documents")
       .withIndex("by_user_parent", (q) =>
