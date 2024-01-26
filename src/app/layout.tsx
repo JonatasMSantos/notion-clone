@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 
 import { ThemeProvider } from "@/providers/theme-provider";
 
+import { ConvexClientProvider } from "@/providers/convex-provider";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -35,17 +36,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-          storageKey="JNotes-theme-2"
-        >
-          <Toaster position="bottom-center" />
+        <ConvexClientProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+            storageKey="JNotes-theme-2"
+          >
+            <Toaster position="bottom-center" />
 
-          {children}
-        </ThemeProvider>
+            {children}
+          </ThemeProvider>
+        </ConvexClientProvider>
       </body>
     </html>
   );
