@@ -1,10 +1,11 @@
+import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Toaster } from "sonner";
 
 import { ThemeProvider } from "@/providers/theme-provider";
 
 import { ConvexClientProvider } from "@/providers/convex-provider";
+import { ModalProvider } from "@/providers/modal-provider";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -42,10 +43,10 @@ export default function RootLayout({
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
-            storageKey="JNotes-theme-2"
+            storageKey="jotion-theme-2"
           >
             <Toaster position="bottom-center" />
-
+            <ModalProvider />
             {children}
           </ThemeProvider>
         </ConvexClientProvider>

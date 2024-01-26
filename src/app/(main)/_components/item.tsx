@@ -1,6 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/clerk-react";
+import { useMutation } from "convex/react";
 import {
   ChevronDown,
   ChevronRight,
@@ -10,9 +11,7 @@ import {
   Trash,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 import {
   DropdownMenu,
@@ -21,8 +20,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { cn } from "@/lib/utils";
 
 interface ItemProps {
+  id?: Id<"documents">;
   documentIcon?: string;
   active?: boolean;
   expanded?: boolean;
@@ -35,6 +39,7 @@ interface ItemProps {
 }
 
 export const Item = ({
+  id,
   label,
   onClick,
   icon: Icon,
@@ -47,6 +52,20 @@ export const Item = ({
 }: ItemProps) => {
   const { user } = useUser();
   const router = useRouter();
+  const create = useMutation(api.documents.create);
+  const archive = useMutation(api.documents.archive);
+
+  const onArchive = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    event.stopPropagation();
+    if (!id) return;
+    const promise = archive({ id }).then(() => router.push("/documents"));
+
+    toast.promise(promise, {
+      loading: "Moving to trash...",
+      success: "Note moved to trash!",
+      error: "Failed to archive note.",
+    });
+  };
 
   const handleExpand = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -55,7 +74,24 @@ export const Item = ({
     onExpand?.();
   };
 
-  const onCreate = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {};
+  const onCreate = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    event.stopPropagation();
+    if (!id) return;
+    const promise = create({ title: "Untitled", parentDocument: id }).then(
+      (documentId) => {
+        if (!expanded) {
+          onExpand?.();
+        }
+        router.push(`/documents/${documentId}`);
+      }
+    );
+
+    toast.promise(promise, {
+      loading: "Creating a new note...",
+      success: "New note created!",
+      error: "Failed to create a new note.",
+    });
+  };
 
   const ChevronIcon = expanded ? ChevronDown : ChevronRight;
 
@@ -71,6 +107,15 @@ export const Item = ({
         active && "bg-primary/5 text-primary"
       )}
     >
+      {!!id && (
+        <div
+          role="button"
+          className="h-full rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 mr-1"
+          onClick={handleExpand}
+        >
+          <ChevronIcon className="h-4 w-4 shrink-0 text-muted-foreground/50" />
+        </div>
+      )}
       {documentIcon ? (
         <div className="shrink-0 mr-2 text-[18px]">{documentIcon}</div>
       ) : (
@@ -82,7 +127,7 @@ export const Item = ({
           <span className="text-xs">⌘</span>K
         </kbd>
       )}
-      {
+      {!!id && (
         <div className="ml-auto flex items-center gap-x-2">
           <DropdownMenu>
             <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
@@ -99,7 +144,7 @@ export const Item = ({
               side="right"
               forceMount
             >
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={onArchive}>
                 <Trash className="h-4 w-4 mr-2" />
                 Delete
               </DropdownMenuItem>
@@ -117,7 +162,7 @@ export const Item = ({
             <Plus className="h-4 w-4 text-muted-foreground" />
           </div>
         </div>
-      }
+      )}
     </div>
   );
 };
