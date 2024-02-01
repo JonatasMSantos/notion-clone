@@ -25,7 +25,7 @@ export const ScrollPageOnDrag = ({
     scrollTop: 0,
   });
   const [isScrolling, setIsScrolling] = useState(false);
-  const handleDragStart = (e: any) => {
+  const handleDragStart = async (e: any) => {
     if (!ourRef.current) return;
     const slider = ourRef.current.children[0];
 

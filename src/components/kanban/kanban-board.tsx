@@ -7,7 +7,9 @@ import {
   DragOverEvent,
   DragOverlay,
   DragStartEvent,
+  MouseSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -18,7 +20,6 @@ import { createPortal } from "react-dom";
 import ColumnContainer from "./column-container";
 import TaskCard from "./task-card";
 
-import { ScrollPageOnDrag } from "../scroll-page-drag";
 import "./kanban.css";
 
 const defaultCols: Column[] = [
@@ -121,51 +122,53 @@ function KanbanBoard() {
       activationConstraint: {
         distance: 10,
       },
+    }),
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
     })
   );
 
   return (
-    <ScrollPageOnDrag innerRef={pageRef}>
-      <div
-        ref={pageRef}
-        className="        
-        m-11
-        pb-7
-        flex
-        w-full
-        items-center
-        overflow-x-auto
-        overflow-y-hidden
-    "
+    // <ScrollPageOnDrag innerRef={pageRef}>
+    <div
+      ref={pageRef}
+      className="flex gap-x-3 h-full pb-5 overflow-y-hidden overflow-x-scroll my-8 lg:mx-1 min-[320px]:m-1"
+    >
+      <DndContext
+        sensors={sensors}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        onDragOver={onDragOver}
       >
-        <DndContext
-          sensors={sensors}
-          onDragStart={onDragStart}
-          onDragEnd={onDragEnd}
-          onDragOver={onDragOver}
-        >
-          <div className="m-auto flex gap-4">
-            <div className="flex gap-4">
-              <SortableContext items={columnsId}>
-                {columns.map((col) => (
-                  <ColumnContainer
-                    key={col.id}
-                    column={col}
-                    deleteColumn={deleteColumn}
-                    updateColumn={updateColumn}
-                    createTask={createTask}
-                    deleteTask={deleteTask}
-                    updateTask={updateTask}
-                    tasks={tasks.filter((task) => task.columnId === col.id)}
-                  />
-                ))}
-              </SortableContext>
-            </div>
-            <button
-              onClick={() => {
-                createNewColumn();
-              }}
-              className="
+        <div className="m-auto flex gap-4">
+          <div className="flex gap-4">
+            <SortableContext items={columnsId}>
+              {columns.map((col) => (
+                <ColumnContainer
+                  key={col.id}
+                  column={col}
+                  deleteColumn={deleteColumn}
+                  updateColumn={updateColumn}
+                  createTask={createTask}
+                  deleteTask={deleteTask}
+                  updateTask={updateTask}
+                  tasks={tasks.filter((task) => task.columnId === col.id)}
+                />
+              ))}
+            </SortableContext>
+          </div>
+          <button
+            onClick={() => {
+              createNewColumn();
+            }}
+            className="
                 h-[60px]
                 w-[350px]
                 min-w-[350px]
@@ -181,40 +184,40 @@ function KanbanBoard() {
                 flex
                 gap-1
               "
-            >
-              <PlusCircleIcon />
-              Add Column
-            </button>
-          </div>
+          >
+            <PlusCircleIcon />
+            Add Column
+          </button>
+        </div>
 
-          {createPortal(
-            <DragOverlay>
-              {activeColumn && (
-                <ColumnContainer
-                  column={activeColumn}
-                  deleteColumn={deleteColumn}
-                  updateColumn={updateColumn}
-                  createTask={createTask}
-                  deleteTask={deleteTask}
-                  updateTask={updateTask}
-                  tasks={tasks.filter(
-                    (task) => task.columnId === activeColumn.id
-                  )}
-                />
-              )}
-              {activeTask && (
-                <TaskCard
-                  task={activeTask}
-                  deleteTask={deleteTask}
-                  updateTask={updateTask}
-                />
-              )}
-            </DragOverlay>,
-            document.body
-          )}
-        </DndContext>
-      </div>
-    </ScrollPageOnDrag>
+        {createPortal(
+          <DragOverlay>
+            {activeColumn && (
+              <ColumnContainer
+                column={activeColumn}
+                deleteColumn={deleteColumn}
+                updateColumn={updateColumn}
+                createTask={createTask}
+                deleteTask={deleteTask}
+                updateTask={updateTask}
+                tasks={tasks.filter(
+                  (task) => task.columnId === activeColumn.id
+                )}
+              />
+            )}
+            {activeTask && (
+              <TaskCard
+                task={activeTask}
+                deleteTask={deleteTask}
+                updateTask={updateTask}
+              />
+            )}
+          </DragOverlay>,
+          document.body
+        )}
+      </DndContext>
+    </div>
+    // </ScrollPageOnDrag>
   );
 
   function createTask(columnId: Id) {

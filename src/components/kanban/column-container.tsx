@@ -3,6 +3,7 @@ import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { PlusCircleIcon, Trash2Icon } from "lucide-react";
 import { useMemo, useState } from "react";
+import { Input } from "../ui/input";
 import TaskCard from "./task-card";
 
 interface Props {
@@ -100,12 +101,12 @@ function ColumnContainer({
           dark:bg-[#0D1117]
           bg-secondary
           shadow-sm
-          text-md
-          h-[60px]
+          text-md          
           cursor-grab
           rounded-md
           rounded-b-none
-          p-3
+          px-3
+          py-1
           font-bold
           dark:border-[#161C22]
           border-1
@@ -117,8 +118,7 @@ function ColumnContainer({
         <div className="flex gap-2">
           {!editMode && column.title}
           {editMode && (
-            <input
-              className="dark:bg-black bg-secondary focus:border-zinc-600 border rounded outline-none px-2"
+            <Input
               value={column.title}
               onChange={(e) => updateColumn(column.id, e.target.value)}
               autoFocus

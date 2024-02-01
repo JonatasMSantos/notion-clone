@@ -3,6 +3,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Trash2Icon } from "lucide-react";
 import { useState } from "react";
+import { Textarea } from "../ui/textarea";
 
 interface Props {
   task: Task;
@@ -57,10 +58,10 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
         style={style}
         {...attributes}
         {...listeners}
-        className="dark:bg-[#0D1117] bg-white p-2.5 h-full items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative"
+        className="dark:bg-[#0D1117] bg-white p-2.5 h-[110px] items-center flex text-left rounded-xl cursor-grab relative"
       >
-        <textarea
-          className="h-full w-full overflow-y-auto border-none rounded bg-transparent text-zinc-700 focus:outline-none"
+        <Textarea
+          className="h-[110px] w-full overflow-y-auto border-none rounded bg-transparent  focus:outline-none p-2"
           value={task.content}
           autoFocus
           placeholder="Task content here"
