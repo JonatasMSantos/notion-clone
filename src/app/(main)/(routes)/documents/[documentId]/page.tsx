@@ -5,10 +5,12 @@ import dynamic from "next/dynamic";
 import { useMemo } from "react";
 
 import { Cover } from "@/components/cover";
+import KanbanBoard from "@/components/kanban/kanban-board";
 import { Toolbar } from "@/components/toolbar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { useSearchParams } from "next/navigation";
 
 interface DocumentIdPageProps {
   params: {
@@ -17,6 +19,10 @@ interface DocumentIdPageProps {
 }
 
 const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
+  const searchParams = useSearchParams();
+
+  const search = searchParams.get("view");
+
   const Editor = useMemo(
     () => dynamic(() => import("@/components/editor"), { ssr: false }),
     []
@@ -60,8 +66,12 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
       <Cover url={document.coverImage} />
       <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
         <Toolbar initialData={document} />
-        <Editor onChange={onChange} initialContent={document.content} />
+        {search == "notes" && (
+          <Editor onChange={onChange} initialContent={document.content} />
+        )}
       </div>
+
+      {search == "board" && <KanbanBoard />}
     </div>
   );
 };

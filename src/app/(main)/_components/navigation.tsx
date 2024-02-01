@@ -3,6 +3,7 @@
 import { useMutation } from "convex/react";
 import {
   ChevronsLeft,
+  KanbanIcon,
   MenuIcon,
   Plus,
   PlusCircle,
@@ -133,6 +134,10 @@ export const Navigation = () => {
     });
   };
 
+  const handleTaskClick = () => {
+    router.push(`/tasks`);
+  };
+
   return (
     <>
       <aside
@@ -157,6 +162,7 @@ export const Navigation = () => {
           <UserItem />
           <Item label="Search" icon={Search} isSearch onClick={search.onOpen} />
           <Item label="Settings" icon={Settings} onClick={settings.onOpen} />
+          <Item label="Tasks" icon={KanbanIcon} onClick={handleTaskClick} />
           <Item onClick={handleCreate} label="New page" icon={PlusCircle} />
         </div>
         <div className="mt-4">
