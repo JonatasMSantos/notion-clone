@@ -1,7 +1,6 @@
 import KanbanBoard from "@/components/kanban/kanban-board";
 
-interface TasksProps {}
-export const Tasks = ({}: TasksProps) => {
+export const Tasks = () => {
   return <KanbanBoard />;
 };
 export default Tasks;
